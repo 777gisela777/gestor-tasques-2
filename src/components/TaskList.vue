@@ -1,21 +1,38 @@
 <script setup>
 import { ref } from 'vue';
-const tasks = defineProps({
-  tasques: Array
-})
+import TaskItem from './TaskItem.vue';
+
+const tasques = defineProps({
+  tasks: {
+    type: Array,
+    default: () => []
+  }
+});
+
+const selectedTask = ref();
+const emit = defineEmits(['eliminarTasca']);
+
+const selectTask = (task) => {
+  selectedTask.value = task;
+};
+
+const deleteTask = (id) => {
+  emit('eliminarTasca', id);
+};
 </script>
 
 <template>
-  <ul>
-    <li v-for="task in tasques" :key="task.id">
-      <p v-if="task.completed">{{ task.nom }} - Completada</p>
-      <p v-else="!task.completed">{{ task.nom }} - Pendent</p>
-      <p>Pendent modificar botons eliminar/canviar estat (passar-los amb props de pare a fill)</p>
-      <button v-on:click="canviarEstatTasca(task)">
-        {{ task.completed ? 'Marcar com a pendent' : 'Marcar com a completada' }}
-      </button>
-      <button v-on:click="eliminarTasca(task)">Eliminar</button>
-    </li>
-  </ul>
-
+  <div class="tasks">
+    <TaskItem
+      v-for="task in tasques.tasks"
+      :key="task.id"
+      :name="task.nom"
+      :completed="task.completed"
+      :selected="task.id === selectedTask?.id"
+      @click="selectTask(task)"
+      @delete="deleteTask(task.id)"
+    />
+  </div>
 </template>
+
+

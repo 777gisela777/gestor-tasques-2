@@ -12,10 +12,19 @@ const tasks = ref([
 const nomTasca = ref('');
 
 const gestionarNom = (nom) => {
-  nomTasca.value = nom;
+ if (!nom || !nom.trim()) return;
+ tasks.value.push({
+  id: Date.now(),
+  nom: nom.trim(),
+  completed: false
+ });
 }
 
 provide('nom', nomTasca);
+
+const eliminarTasca = (id) => {
+  tasks.value = tasks.value.filter(task => task.id !== id);
+}
 </script>
 
 <template>
@@ -23,7 +32,10 @@ provide('nom', nomTasca);
   <p>Afegir una nova tasca</p>
   <Formulari @enviarNom="gestionarNom" />
   <div class="tasks-list">
-    <TaskList :tasques="tasks"/>
+    <TaskList 
+    :tasks="tasks"
+    @eliminarTasca="eliminarTasca"
+    />
   </div>
 </template>
 <style scoped></style>
