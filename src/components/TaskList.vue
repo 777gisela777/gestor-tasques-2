@@ -1,38 +1,33 @@
 <script setup>
-import { ref } from 'vue';
 import TaskItem from './TaskItem.vue';
 
-const tasques = defineProps({
+const props = defineProps({
   tasks: {
     type: Array,
     default: () => []
   }
 });
 
-const selectedTask = ref();
-const emit = defineEmits(['eliminarTasca']);
+const emit = defineEmits(['modifyTaskStatus', 'deleteTask']);
 
-const selectTask = (task) => {
-  selectedTask.value = task;
-};
+function enviarCanviEstat(id) {
+  emit('modifyTaskStatus', id)
+}
 
-const deleteTask = (id) => {
-  emit('eliminarTasca', id);
-};
+function enviarEliminar(id) {
+  emit('deleteTask', id)
+}
+
 </script>
 
 <template>
   <div class="tasks">
     <TaskItem
-      v-for="task in tasques.tasks"
+      v-for="task in props.tasks"
       :key="task.id"
-      :name="task.nom"
-      :completed="task.completed"
-      :selected="task.id === selectedTask?.id"
-      @click="selectTask(task)"
-      @delete="deleteTask(task.id)"
+      :task="task"
+      @modifyTaskStatus="enviarCanviEstat"
+      @deleteTask="enviarEliminar"
     />
   </div>
 </template>
-
-
